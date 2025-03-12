@@ -71,7 +71,36 @@ const userSchema = new mongoose.Schema(
       default: Date.now,
     },
   },
-  { timestamps: true }
+  { timestamps: true, toJSON: { virtuals: true }, toObject: { virtuals: true } }
 );
 
+//Hasing The Password
+userSchema.pre("save", async function (next) {
+  if (!this.isModified("password")) {
+    return next();
+  }
+  this.password = await bcrypt.hash(this.password, 10);
+  next();
+});
+//Compare Password
+userSchema.methods.comparePassword = async function (userPassword) {
+  return await bcrypt.compare(userPassword, this.password);
+};
+userSchema.methods.getPasswordResetToken = function () {
+  const resetToken = crypto.randomBytes(20).toString("hex");
+  this.resetPasswordToken = crypto
+    .createHash("sha256")
+    .update(resetToken)
+    .digest("hex");
+  this.resetPasswordExpire = Date.now() + 30 * 60 * 1000;
+  return resetToken;
+};
+userSchema.methods.updateLastActive = function () {
+  this.lastActive = Date.now();
+  return this.lastActive({ validateBeforeSave: false });
+};
+//Virtual Field for total enrolled Courses
+userSchema.virtual("totalEnrolledCourses").get(function () {
+  return this.enrolledCourses.length;
+});
 export const User = mongoose.model("User", userSchema);
