@@ -97,7 +97,7 @@ userSchema.methods.getPasswordResetToken = function () {
 };
 userSchema.methods.updateLastActive = function () {
   this.lastActive = Date.now();
-  return this.lastActive({ validateBeforeSave: false });
+  return this.save({ validateBeforeSave: false });
 };
 //Virtual Field for total enrolled Courses
 userSchema.virtual("totalEnrolledCourses").get(function () {
