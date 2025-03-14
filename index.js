@@ -7,6 +7,8 @@ import helmet from "helmet";
 import hpp from "hpp";
 import cookieParser from "cookie-parser";
 import cors from "cors";
+import healtCheckRoute from "./routes/health.route.js";
+import dbConnection from "./database/db.js";
 const app = express();
 
 const PORT = process.env.PORT;
@@ -64,6 +66,7 @@ app.use(
 );
 
 //API Routes
+app.use("/api/v1", healtCheckRoute);
 
 // 404 Handler
 app.use((_, res) => {
@@ -73,6 +76,7 @@ app.use((_, res) => {
   });
 });
 app.listen(PORT, () => {
+  dbConnection();
   console.log(
     `Server is running on port ${PORT} in ${process.env.NODE_ENV} mode`
   );

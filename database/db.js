@@ -29,8 +29,6 @@ class DatabaseConnection {
         throw new Error("Mongo URI is required");
       }
       const connectionOptions = {
-        useNewUrlParser: true,
-        useUnifiedTopology: true,
         maxPoolSize: 10,
         serverSelectionTimeoutMS: 5000,
         socketTimeoutMS: 45000,
