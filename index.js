@@ -7,6 +7,7 @@ import helmet from "helmet";
 import hpp from "hpp";
 import cookieParser from "cookie-parser";
 import cors from "cors";
+import userRoute from "./routes/user.route.js";
 import healtCheckRoute from "./routes/health.route.js";
 import dbConnection from "./database/db.js";
 const app = express();
@@ -67,6 +68,7 @@ app.use(
 
 //API Routes
 app.use("/api/v1", healtCheckRoute);
+app.use("/api/v1", userRoute);
 
 // 404 Handler
 app.use((_, res) => {
