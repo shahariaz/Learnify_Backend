@@ -14,5 +14,3 @@ export const isAuthenticated = catchAsync(async (req, res, next) => {
     throw new ApiError("Invalid token. Please login again", 401);
   }
 });
-
-z.vnfv;

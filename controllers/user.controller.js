@@ -32,11 +32,26 @@ export const loginUser = catchAsync(async (req, res) => {
   generateToken(res, user, "User logged in successfully");
 });
 //Logout Function
-export const logoutUser = catchAsync(async (req, res) => {
+export const logoutUser = catchAsync(async (_, res) => {
   res.clearCookie("token").json({
     sucess: true,
     message: "User logged out successfully",
   });
 });
 //Get User Profile
-export const getUserProfile = catchAsync(async (req, res) => {});
+export const getUserProfile = catchAsync(async (req, res) => {
+  const user = await User.findById(req.id).populate({
+    path: "enrolledCourses.course",
+    select: "title thumbnail description",
+  });
+  if (!user) {
+    throw new ApiError("User not found", 404);
+  }
+  res.status(200).json({
+    success: true,
+    data: {
+      ...user.toJSON(),
+      totalEnrolledCourses: user.totalEnrolledCourses,
+    },
+  });
+});
