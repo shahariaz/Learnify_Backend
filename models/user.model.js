@@ -23,6 +23,7 @@ const userSchema = new mongoose.Schema(
         "Please provide a valid email address",
       ],
     },
+
     password: {
       type: String,
       required: [true, "Please provide a password"],
@@ -39,8 +40,7 @@ const userSchema = new mongoose.Schema(
     },
     avatar: {
       type: String,
-      default:
-        "https://res.cloudinary.com/df9jsefb9/image/upload/v1620166476/default-user-image.png",
+      default: process.env.DEFAULT_AVATAR,
     },
     bio: {
       type: String,

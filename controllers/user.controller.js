@@ -1,4 +1,5 @@
 import { ApiError, catchAsync } from "../middleware/error.middleware.js";
+import { uploadMedia } from "../utils/cloudinary.js";
 import { genarateToken } from "../utils/generateToken.js";
 import { User } from "../models/user.model.js";
 //Signup Function
@@ -53,5 +54,36 @@ export const getUserProfile = catchAsync(async (req, res) => {
       ...user.toJSON(),
       totalEnrolledCourses: user.totalEnrolledCourses,
     },
+  });
+});
+//Update User Profile
+export const updateUserProfile = catchAsync(async (req, res) => {
+  const { name, email, bio } = req.body;
+  const updateData = {
+    name,
+    email: email.toLowerCase(),
+    bio,
+  };
+  const user = await User.findById(req.id);
+  if (!user) {
+    throw new ApiError("User not found", 404);
+  }
+  if (req.file) {
+    const avatarResult = await uploadMedia(req.file.path);
+    updateData.avatar = avatarResult.secure_url;
+    //deleting the old image from cloudinary
+
+    if (user.avatar && user.avatar !== process.env.DEFAULT_AVATAR) {
+      await delteMediaFromCLoudinary(user.avatar);
+    }
+  }
+  const updatedUser = await User.findByIdAndUpdate(req.id, updateData, {
+    new: true,
+    runValidators: true,
+  });
+  res.status(200).json({
+    success: true,
+    message: "Profile updated successfully",
+    data: updatedUser,
   });
 });
